@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import z from 'zod';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import { authmiddleware } from './middleware';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -117,6 +118,66 @@ app.post('/login', async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error(error);
+        return res.status(500).send('Internal Server Error');
+    }
+}); 
+
+app.post('/blog', authmiddleware, async (req: Request, res: Response) => {
+    try {
+        const { title, content, userId } = req.body;
+        console.log(userId)
+        const blog = await prisma.blog.create({
+            data: {
+                title,
+                content,
+                author: {
+                    connect: { id: userId }
+                }
+            },
+        });
+        return res.json({
+            message: "Blog created successfully",
+            blog,
+        });
+    } catch (error) {
+        console.error("error is ", error);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title, content } = req.body;
+        const blog = await prisma.blog.update({
+            where: { id: Number(id) },
+            data: {
+                title,
+                content,
+            },
+        });
+        return res.json({
+            message: "Blog updated successfully",
+            blog,
+        });
+    } catch (error) {
+        console.error("error is ", error);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+app.get('/blogs/:id', async (req: Request, res: Response) => {  
+    try {
+        const { id } = req.params;
+        const blogs = await prisma.blog.findMany({
+            where: { authorId: Number(id) },
+        });
+        return res.json({
+            message: "Blogs fetched successfully",
+            blogs,
+        });
+    } catch (error) {
+        console.error("error is ", error);
         return res.status(500).send('Internal Server Error');
     }
 });

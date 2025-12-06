@@ -22,6 +22,7 @@ app.use(cors());
 app.post('/signup', async (req: Request, res: Response) => {
     try {
         const zodSchema = z.object({
+            username : z.string().min(3).max(20).trim(),
             email: z.email("Please enter a valid email address").trim(),
             password: z
                 .string()
@@ -40,10 +41,11 @@ app.post('/signup', async (req: Request, res: Response) => {
             })
         }
         try {
-            const { email, password } = req.body;
+            const {username, email, password } = req.body;
             const hasedpassword = await bcrypt.hash(password, 10);
             const user = await prisma.user.create({
                 data: {
+                    username,
                     email,
                     password: hasedpassword,
                 },

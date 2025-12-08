@@ -23,7 +23,6 @@ export function Header() {
                             <path d="M4 20c0-3.2 2.8-5.8 6-5.8h4c3.2 0 6 2.6 6 5.8" />
                         </g>
                     </svg>
-
                 </div>
             </div>
         </header>

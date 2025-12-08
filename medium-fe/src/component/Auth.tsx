@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader } from "./Loader";
+import toast from "react-hot-toast";
 
 interface Authtype {
     type: "signup" | "login"
@@ -9,21 +11,43 @@ export const Auth = (props: Authtype) => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loader, setLoader] = useState(false)
     const navigate = useNavigate()
 
     const handleSubmit = async()=> {
+        if (props.type === "signup") {
+            if (!username || !email || !password) {
+                toast.error("All fields are required!");
+                return;
+            }
+        }
+    
+        if (props.type === "login") {
+            if (!email || !password) {
+                toast.error("Email and password are required!");
+                return;
+            }
+        }
         try{
+            setLoader(true)
             const res = await axios.post(`http://localhost:4000/${props.type}`, {
                 username,
                 email,
                 password
             });
             const token = res.data.token;
-            localStorage.setItem("token", token);
-            navigate("/blog");
+            if (token === undefined){
+                toast.error("enter valid password")
+            } else {
+                localStorage.setItem("token", token);
+                navigate("/blogs");
+                toast.success("verify successfully")
+            }
         }catch(err){
             console.log("error is", err);
-        } 
+        } finally {
+            setLoader(false)
+        }
     }
 
     return <div className="h-screen flex justify-center ">
@@ -49,7 +73,7 @@ export const Auth = (props: Authtype) => {
                     }}/>
                     <button onClick={handleSubmit}
                     className="bg-gray-900 text-white px-4 py-2 rounded-md mt-4 w-full cursor-pointer hover:bg-black">
-                        {props.type === "login" ? "Login" : "Create an Account"}
+                        {loader ? <Loader/> : props.type === "login" ? "Login" : "Create an Account"}
                     </button>
                 </div>
             </div>

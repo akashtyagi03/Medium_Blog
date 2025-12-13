@@ -124,6 +124,7 @@ app.post('/login', async (req: Request, res: Response) => {
     }
 }); 
 
+// blog post end point
 app.post('/blog', authmiddleware, async (req: Request, res: Response) => {
     try {
         const { title, content, userId } = req.body;
@@ -147,6 +148,7 @@ app.post('/blog', authmiddleware, async (req: Request, res: Response) => {
     }
 });
 
+// a particular blog update end point
 app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -168,6 +170,7 @@ app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
     }
 });
 
+// get all blogs by author id end point
 app.get('/blogs/:id', async (req: Request, res: Response) => {  
     try {
         const { id } = req.params;
@@ -183,6 +186,19 @@ app.get('/blogs/:id', async (req: Request, res: Response) => {
         return res.status(500).send('Internal Server Error');
     }
 });
+
+app.get('/blog/bluk', async(req:Request, res:Response)=>{
+    try{
+        const blukblogs = await prisma.blog.findMany()
+        return res.json({
+            blukblogs
+        })
+    } catch(e) {
+        console.log("error is"+e)
+        return res.status(500).send("Internal server error")
+    }
+
+})
 
 app.listen(process.env.PORT, () => {
     console.log('Server is running on' +" "+ process.env.PORT);

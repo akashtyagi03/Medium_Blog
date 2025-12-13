@@ -189,7 +189,18 @@ app.get('/blogs/:id', async (req: Request, res: Response) => {
 
 app.get('/blog/bluk', async(req:Request, res:Response)=>{
     try{
-        const blukblogs = await prisma.blog.findMany()
+        const blukblogs = await prisma.blog.findMany({
+            select:{
+                content:true,
+                title:true,
+                id:true,
+                author:{
+                    select:{
+                        username:true
+                    }
+                }
+            }
+        })
         return res.json({
             blukblogs
         })

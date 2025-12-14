@@ -127,8 +127,8 @@ app.post('/login', async (req: Request, res: Response) => {
 // blog post end point
 app.post('/blog', authmiddleware, async (req: Request, res: Response) => {
     try {
-        const { title, content, userId } = req.body;
-        console.log(userId)
+        const { title, content } = req.body;
+        const userId = req.userId;
         const blog = await prisma.blog.create({
             data: {
                 title,
@@ -171,7 +171,7 @@ app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
 });
 
 // get all blogs by author id end point
-app.get('/blogs/:id', async (req: Request, res: Response) => {  
+app.get('/blogs/:id', authmiddleware, async (req: Request, res: Response) => {  
     try {
         const { id } = req.params;
         const blogs = await prisma.blog.findMany({
@@ -187,7 +187,7 @@ app.get('/blogs/:id', async (req: Request, res: Response) => {
     }
 });
 
-app.get('/blog/bluk', async(req:Request, res:Response)=>{
+app.get('/blog/bluk', authmiddleware, async(req:Request, res:Response)=>{
     try{
         const blukblogs = await prisma.blog.findMany({
             select:{

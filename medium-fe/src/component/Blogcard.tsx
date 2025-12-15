@@ -25,7 +25,6 @@ export const Blogcard = ({
             </h2>
             <p className="text-gray-700 text-sm line-clamp-2">
                 {(content ?? "").slice(0, 100) + "..."}
-                {/* {content} */}
             </p>
         </div>
     </Link>

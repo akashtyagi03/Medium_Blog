@@ -173,9 +173,19 @@ app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
 // get all blogs by author id end point
 app.get('/blogs/:id', authmiddleware, async (req: Request, res: Response) => {  
     try {
-        const { id } = req.params;
-        const blogs = await prisma.blog.findMany({
-            where: { authorId: Number(id) },
+        const id = Number(req.params.id);
+        const blogs = await prisma.blog.findUnique({
+            where: { id },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                author: {
+                    select: {
+                        username: true
+                    }
+                }
+            }
         });
         return res.json({
             message: "Blogs fetched successfully",

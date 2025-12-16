@@ -148,7 +148,31 @@ app.post('/blog', authmiddleware, async (req: Request, res: Response) => {
     }
 });
 
-// a particular blog update end point
+// get all blogs end point
+app.get('/blog/bluk', authmiddleware, async(req:Request, res:Response)=>{
+    try{
+        const blukblogs = await prisma.blog.findMany({
+            select:{
+                content:true,
+                title:true,
+                id:true,
+                author:{
+                    select:{
+                        username:true
+                    }
+                }
+            }
+        })
+        return res.json({
+            blukblogs
+        })
+    } catch(e) {
+        console.log("error is"+e)
+        return res.status(500).send("Internal server error")
+    }
+})
+
+// a particular blog update end point(edit blog)
 app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
@@ -162,6 +186,33 @@ app.put('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
         });
         return res.json({
             message: "Blog updated successfully",
+            blog,
+        });
+    } catch (error) {
+        console.error("error is ", error);
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+// to get a particular blog by id
+app.get('/blog/:id', authmiddleware,  async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const blog = await prisma.blog.findUnique({
+            where: { id: Number(id) },
+            select: {
+                id: true,
+                title: true,
+                content: true,
+                author: {
+                    select: {
+                        username: true
+                    }
+                }   
+            },
+        });
+        return res.json({
+            message: "Blog fetched successfully",
             blog,
         });
     } catch (error) {
@@ -196,30 +247,6 @@ app.get('/blogs/:id', authmiddleware, async (req: Request, res: Response) => {
         return res.status(500).send('Internal Server Error');
     }
 });
-
-app.get('/blog/bluk', authmiddleware, async(req:Request, res:Response)=>{
-    try{
-        const blukblogs = await prisma.blog.findMany({
-            select:{
-                content:true,
-                title:true,
-                id:true,
-                author:{
-                    select:{
-                        username:true
-                    }
-                }
-            }
-        })
-        return res.json({
-            blukblogs
-        })
-    } catch(e) {
-        console.log("error is"+e)
-        return res.status(500).send("Internal server error")
-    }
-
-})
 
 app.listen(process.env.PORT, () => {
     console.log('Server is running on' +" "+ process.env.PORT);

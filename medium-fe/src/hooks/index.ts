@@ -4,17 +4,17 @@ import { useEffect, useState } from "react"
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 
 export const useblog = ({ id }:{ id:string }) =>{
-    const [blogs, setBlogs] = useState<any>()
+    const [blog, setBlogs] = useState<any>()
     const [loading, setLoading] = useState<boolean>(true)
-
+ 
     useEffect(() => {
         axios.get(`${backendUrl}blog/${id}`,{
             headers:{
                 Authorization: `Bearer ${localStorage.getItem("token")}`
             }
-        })
+        })  
             .then(res => {
-                setBlogs(res.data.blogs);
+                setBlogs(res.data.blog);
                 setLoading(false);
             })
             .catch(err => {
@@ -23,10 +23,9 @@ export const useblog = ({ id }:{ id:string }) =>{
             });
     }, [id]);
 
-
     return {
         loading,
-        blogs
+        blog
     }
 }
 
@@ -35,7 +34,6 @@ export const useblogs = () => {
     const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
-
         axios.get(`${backendUrl}blog/bluk`,{
             headers:{
                 Authorization: `Bearer ${localStorage.getItem("token")}`

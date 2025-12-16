@@ -3,16 +3,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "./Loader";
 import toast from "react-hot-toast";
+import { useUserStore } from "../store/useUserStore";
 
 interface Authtype {
     type: "signup" | "login"
 }
+
 export const Auth = (props: Authtype) => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [loader, setLoader] = useState(false)
     const navigate = useNavigate()
+    const {setUser} = useUserStore();
 
     const handleSubmit = async()=> {
         if (props.type === "signup") {
@@ -31,15 +34,16 @@ export const Auth = (props: Authtype) => {
         try{
             setLoader(true)
             const res = await axios.post(`http://localhost:4000/${props.type}`, {
-                username,
+                username: username,
                 email,
                 password
             });
-            const token = res.data.token;
+            const {token, user} = res.data;
             if (token === undefined){
                 toast.error("enter valid password")
             } else {
                 localStorage.setItem("token", token);
+                setUser(user);
                 navigate("/blogs");
                 toast.success("verify successfully")
             }

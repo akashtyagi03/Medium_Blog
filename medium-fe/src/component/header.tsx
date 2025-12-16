@@ -1,28 +1,35 @@
+import { Link } from "react-router-dom";
+import { PencilIcon } from "./Pencilicon";
+import { Notificationicon } from "./Notificationicon";
+import { useUserStore } from "../store/useUserStore";
+
 export function Header() {
+    const {user} = useUserStore();
+    console.log(user?.username)
+
     return (
         <header className="bg-white shadow px-20 h-16 fixed top-0 left-0 w-full z-50 ">
             <div className="max-w mx-auto py-3 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 <div className="flex">
-                    <h1 className="text-3xl text-gray-900 font-sans">
+                    <Link to="/blogs" className="text-3xl text-gray-900 font-sans">
                         Medium
-                    </h1>
+                    </Link>
                     <div className="pl-5">
                         <input type="text" placeholder="search" className="border rounded-2xl p-2" />
                     </div>
                 </div>
-                <div className="flex px-10 gap-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" viewBox="0 0 24 24" width="30" height="30" role="img" aria-label="Notification bell outline">
-                        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 8.5-3 8.5h18s-3-1.5-3-8.5" />
-                            <path d="M10 20a2 2 0 0 0 4 0" />
-                        </g>
-                    </svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="cursor-pointer" viewBox="0 0 24 24" width="30" height="30" role="img" aria-label="Profile icon outline">
-                        <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="8" r="3.2" />
-                            <path d="M4 20c0-3.2 2.8-5.8 6-5.8h4c3.2 0 6 2.6 6 5.8" />
-                        </g>
-                    </svg>
+                <div className="flex items-center px-10 gap-5">
+                    <Link to="/publish">
+                        <button className="flex cursor-pointer items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-full hover:bg-gray-100 transition">
+                            <PencilIcon />
+                            <span>Write</span>
+                        </button>
+                    </Link>
+                    <Notificationicon size={25} />
+                    {/* // add profile functionality later here */}
+                    <div className="cursor-pointer flex items-center justify-center w-9 h-9 rounded-full bg-gray-200 text-gray-800 font-medium">
+                        {user?.username[0].toUpperCase()}
+                    </div>
                 </div>
             </div>
         </header>
